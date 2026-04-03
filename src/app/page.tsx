@@ -1,9 +1,9 @@
-import { VideoPlayer } from "@/components/player/VideoPlayer";
+import { VideoPlayerClient } from "@/components/player/VideoPlayerClient";
 
 export default function HomePage() {
   return (
     <main>
-      <VideoPlayer />
+      <VideoPlayerClient />
     </main>
   );
 }
