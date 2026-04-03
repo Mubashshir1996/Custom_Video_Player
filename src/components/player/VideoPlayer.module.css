@@ -18,20 +18,14 @@
 .header {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 4px;
   margin-bottom: 20px;
 }
 
 .eyebrow {
-  margin: 0 0 6px;
+  margin: 0;
   font-size: 24px;
   font-weight: 700;
-}
-
-.title {
-  margin: 0;
-  font-size: 28px;
-  line-height: 1.2;
 }
 
 .viewport {
@@ -39,11 +33,33 @@
   background: #0f172a;
   border-radius: 12px;
   overflow: hidden;
+  min-height: 240px;
 }
 
 .canvas {
   aspect-ratio: 16 / 9;
   background: #0f172a;
+}
+
+.hiddenVideo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  inset: auto;
+}
+
+.statusOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #e5e7eb;
+  font-size: 14px;
+  background: rgba(15, 23, 42, 0.48);
 }
 
 .controls {
@@ -61,8 +77,19 @@
   padding: 10px 14px;
   border: 1px solid #c6ccd4;
   border-radius: 10px;
+  background: #111827;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.primaryButton:disabled {
   background: #f3f4f6;
   color: #6b7280;
+  cursor: not-allowed;
+}
+
+.primaryButton[data-active="true"] {
+  background: #374151;
 }
 
 .timeReadout {
@@ -103,7 +130,7 @@
 }
 
 .timelineProgress {
-  width: 18%;
+  width: 0;
   height: 100%;
   background: #111827;
 }
@@ -111,7 +138,7 @@
 .playhead {
   position: absolute;
   top: 50%;
-  left: 18%;
+  left: 0;
   width: 14px;
   height: 14px;
   border: 2px solid #111827;
