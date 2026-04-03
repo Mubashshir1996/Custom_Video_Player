@@ -3,7 +3,7 @@
 import { PlayerCanvas } from "./PlayerCanvas";
 import { PlayerControls } from "./PlayerControls";
 import { PlayerTimeline } from "./PlayerTimeline";
-import { useVideoPlayer } from "./useVideoPlayer";
+import { useVideoPlayer } from "../hooks/useVideoPlayer";
 import styles from "./VideoPlayer.module.css";
 
 const SAMPLE_VIDEO_SOURCE = "/media/sample.mp4";
@@ -35,7 +35,15 @@ export function VideoPlayer() {
             onFilterChange={player.handleFilterChange}
             onTogglePlayback={player.handleTogglePlayback}
           />
-          <PlayerTimeline playheadRef={player.playheadRef} progressRef={player.progressRef} />
+          <PlayerTimeline
+            currentTime={player.currentTime}
+            duration={player.duration}
+            isReady={player.isReady}
+            playheadRef={player.playheadRef}
+            progressRef={player.progressRef}
+            timelineProps={player.timelineProps}
+            timelineRef={player.timelineRef}
+          />
         </div>
       </div>
     </section>

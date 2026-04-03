@@ -3,7 +3,7 @@
 import type {
   VideoWorkerRequest,
   VideoWorkerResponse,
-} from "../components/player/playerWorkerMessages";
+} from "../lib/playerWorkerMessages";
 import { applyVideoFilter } from "./applyVideoFilter";
 
 const workerScope = self as DedicatedWorkerGlobalScope;

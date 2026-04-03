@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import type { VideoFilter } from "./playerFilters";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { VideoFilter } from "../lib/playerFilters";
 import { useCanvasWorker } from "./useCanvasWorker";
+import { useTimelineScrubbing } from "./useTimelineScrubbing";
 import { useTimelineSync } from "./useTimelineSync";
 
 type UseVideoPlayerOptions = {
@@ -16,6 +17,7 @@ export function useVideoPlayer({ source }: UseVideoPlayerOptions) {
   const [isMediaReady, setIsMediaReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [mediaError, setMediaError] = useState<string | null>(null);
+  const resumePlaybackAfterScrubRef = useRef(false);
   const { playheadRef, progressRef, syncTimeline } = useTimelineSync();
   const { isWorkerReady, renderFrame, workerError } = useCanvasWorker({ canvasRef, filter });
   const errorMessage = mediaError ?? workerError;
@@ -23,6 +25,68 @@ export function useVideoPlayer({ source }: UseVideoPlayerOptions) {
   const statusMessage =
     errorMessage ??
     (!isMediaReady ? "Loading video..." : !isWorkerReady ? "Starting renderer..." : null);
+
+  const scrubToTime = useCallback(
+    (nextTime: number) => {
+      const video = videoRef.current;
+
+      if (!video) {
+        return;
+      }
+
+      const safeDuration = video.duration || duration;
+      const clampedTime = Math.min(Math.max(nextTime, 0), safeDuration || 0);
+
+      setCurrentTime(clampedTime);
+      syncTimeline(clampedTime, safeDuration);
+
+      if (Math.abs(video.currentTime - clampedTime) > 0.01) {
+        video.currentTime = clampedTime;
+      }
+    },
+    [duration, syncTimeline]
+  );
+
+  const handleScrubStart = useCallback(() => {
+    const video = videoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    resumePlaybackAfterScrubRef.current = !video.paused && !video.ended;
+
+    if (resumePlaybackAfterScrubRef.current) {
+      video.pause();
+    }
+  }, []);
+
+  const handleScrubEnd = useCallback(() => {
+    const video = videoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    if (resumePlaybackAfterScrubRef.current) {
+      resumePlaybackAfterScrubRef.current = false;
+      void video.play().catch(() => {
+        setMediaError("Playback was blocked by the browser.");
+      });
+      return;
+    }
+
+    void renderFrame(video);
+  }, [renderFrame]);
+
+  const { timelineProps, timelineRef } = useTimelineScrubbing({
+    currentTime,
+    duration,
+    isReady,
+    onScrub: scrubToTime,
+    onScrubEnd: handleScrubEnd,
+    onScrubStart: handleScrubStart,
+  });
 
   async function handleTogglePlayback() {
     const video = videoRef.current;
@@ -181,6 +245,8 @@ export function useVideoPlayer({ source }: UseVideoPlayerOptions) {
     progressRef,
     source,
     statusMessage,
+    timelineProps,
+    timelineRef,
     videoRef,
   };
 }

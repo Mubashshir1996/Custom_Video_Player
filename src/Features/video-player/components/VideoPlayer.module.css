@@ -122,6 +122,17 @@
   padding: 8px 0;
 }
 
+.timelineInteractive {
+  cursor: pointer;
+  touch-action: none;
+}
+
+.timelineInteractive:focus-visible {
+  outline: 2px solid #111827;
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
 .timelineTrack {
   height: 6px;
   border-radius: 999px;

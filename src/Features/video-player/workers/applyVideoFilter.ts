@@ -1,4 +1,4 @@
-import type { VideoFilter } from "../components/player/playerFilters";
+import type { VideoFilter } from "../lib/playerFilters";
 
 export function applyVideoFilter(pixels: Uint8ClampedArray, filter: VideoFilter) {
   for (let index = 0; index < pixels.length; index += 4) {

@@ -1,5 +1,5 @@
-import { formatTime } from "@/lib/formatTime";
-import { FILTER_OPTIONS, type VideoFilter } from "./playerFilters";
+import { formatTime } from "../lib/formatTime";
+import { FILTER_OPTIONS, type VideoFilter } from "../lib/playerFilters";
 import styles from "./VideoPlayer.module.css";
 
 type PlayerControlsProps = {
